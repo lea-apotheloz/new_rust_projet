@@ -1,21 +1,34 @@
-use std::io::{self,Write};
-use std::fs::OpenOptions;
-fn main() -> io::Result<()> {
+use std::fs;
+use std::fs::read_to_string;
+use std::io;
+fn main() -> std::io::Result<()>{
+    let mut todo = String::new();
     println!("write a to-do");
-    let mut todo= String::new();
-    io::stdin().read_line(&mut todo)?;
+    io::stdin()
+        .read_line(&mut todo)
+        .expect("Read line failed.");
 
-    //open the new file in append mode
-    let mut file = OpenOptions::new()
-        .create(true)
-        .append(true)
-        .open("todo.txt")?;
-    
-    // Remove white spaces at the beginning and end
+
     let todo = todo.trim();
 
-    // write to text file
-    writeln!(file, "{}", todo)?;
-    Ok(())
 
+   //Open file.
+   let mut todos: Vec<String> = match read_to_string("todo_list.txt") {
+       Err(_) => Vec::new(),
+       Ok(todo_list) => todo_list.lines().map(String::from).collect(),
+   };
+    
+    if todo.contains("--delete") {
+        let test = todo.split(" ").last();
+        let nomber_line: usize = test.expect("Error").parse().unwrap();
+
+        todos.remove(nomber_line - 1);
+    
+    }else {
+       // write to Vec
+        todos.push(todo.to_string());
+
+    }
+    fs::write("todo_list.txt", todos.join("n")).expect("err");
+    Ok(())
 }
