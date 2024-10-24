@@ -5,16 +5,29 @@ use std::fs::{self};
 use std::io;
 use clap::Parser;
 
-
+/// implementation of a struct to be able to think of text format in json format
 #[derive(Serialize, Deserialize)]
 struct Todo {
     message: String,
-}
-#[derive(Parser)]
+    status: bool,
 
+    
+}
+
+///structure allows that on the terminal directly type the flag searched by the user
+#[derive(Parser)]
 struct Flag{
-    #[arg(long,short)]
-    delete: Option<usize>,
+    
+    /// write number line 
+    /// delete the line you no longer want
+    #[arg(long,short, default_value_t = 0)]
+    delete: usize,
+
+    /// write number line 
+    /// indicate that the todo is finished
+    #[arg(long, default_value_t= 0)]
+    done: usize,
+    
 
 }
 
@@ -29,34 +42,32 @@ fn main() -> std::io::Result<()> {
 
     
 
-if let Some(number_line)= flag.delete {
-    if number_line > 0 && number_line <= todos.len(){
-        todos.remove(number_line -1);
-    };
+if flag.delete > 0 && flag.delete <= todos.len(){
+        todos.remove(flag.delete -1);
 
-}else {
+    }else if flag.done > 0&& flag.done <= todos.len() {
+        todos[flag.done -1].status = true;
+        
+    }else{
     let mut todo = String::new();
     println!("write a to-do");
     io::stdin().read_line(&mut todo).expect("Read line failed.");
 
+
     let todo = todo.trim();
 
-    if !todo.is_empty(){
-        todos.push(Todo{message: todo.to_string()});
-    }
-}
-
-
-  //  if todo.contains("--delete") {
-    //    let test = todo.split(" ").last();
-      //  let nomber_line: usize = test.expect("Error").parse().unwrap();
-
-     //   todos.remove(nomber_line - 1);
-   // } else {
-        // write to Vec
+    let user_todo = Todo{
+        message: todo.to_string(),
+        status:false,
         
-    
+    };
+   
+     todos.push(user_todo);
+     
 
+    
+}
+        
     fs::write(
         "todo_list.json",
         serde_json::to_string(&todos).expect("Cannot serialize"),
