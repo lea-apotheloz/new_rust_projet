@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use serde_json;
+use serde_json::{self};
 use std::fs::read_to_string;
 use std::fs::{self};
 use std::io;
@@ -27,8 +27,11 @@ struct Flag{
     /// indicate that the todo is finished
     #[arg(long, default_value_t= 0)]
     done: usize,
-    
 
+    ///write number line 
+    /// indicate that the dodo is not finished
+    #[arg(long,default_value_t = 0)]
+    undone: usize,
 }
 
 fn main() -> std::io::Result<()> {
@@ -47,8 +50,12 @@ if flag.delete > 0 && flag.delete <= todos.len(){
 
     }else if flag.done > 0&& flag.done <= todos.len() {
         todos[flag.done -1].status = true;
-        
-    }else{
+
+    }else if flag.undone > 0 && flag.undone <= todos.len(){
+        todos[flag.done -1].status = false;
+    }
+    
+    else{
     let mut todo = String::new();
     println!("write a to-do");
     io::stdin().read_line(&mut todo).expect("Read line failed.");
