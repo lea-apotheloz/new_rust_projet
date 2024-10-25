@@ -33,7 +33,7 @@ struct Flag {
     undone: bool,
 
     /// write a date
-    /// add a dealine 
+    /// add a dealine
     #[arg(long)]
     due: Option<String>,
 
@@ -81,12 +81,7 @@ fn main() -> std::io::Result<()> {
     } else if flag.sort {
         // Using sort_by
         todos.sort_by(|a, b| a.deadline.cmp(&b.deadline));
-        
-    }
-    
-    
-    
-    else {
+    } else {
         let mut todo = String::new();
         println!("write a to-do");
         io::stdin().read_line(&mut todo).expect("Read line failed.");
