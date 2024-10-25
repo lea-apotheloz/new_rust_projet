@@ -32,11 +32,17 @@ struct Flag {
     #[arg(long)]
     undone: bool,
 
+    /// write a date
+    /// add a dealine 
     #[arg(long)]
     due: Option<String>,
 
+    ///display todos ans status
     #[arg(long)]
     list: bool,
+
+    #[arg(long)]
+    sort: bool,
 
     #[arg(long, default_value_t = 0)]
     id: usize,
@@ -72,7 +78,15 @@ fn main() -> std::io::Result<()> {
             let _status = if todo_list.status { "done" } else { "undone" };
             println!("{}. {} =  {}", _i + 1, todo_list.message, _status);
         }
-    } else {
+    } else if flag.sort {
+        // Using sort_by
+        todos.sort_by(|a, b| a.deadline.cmp(&b.deadline));
+        
+    }
+    
+    
+    
+    else {
         let mut todo = String::new();
         println!("write a to-do");
         io::stdin().read_line(&mut todo).expect("Read line failed.");
